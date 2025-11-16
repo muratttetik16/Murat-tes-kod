@@ -1,18 +1,23 @@
-# YOLO Loss Graph Generator
+# YOLOv8x Model Eğitim Kayıp Grafikleri
 
-Bu proje, YOLO model eğitim çıktısı olan `results.csv` dosyasından kayıp (loss) grafiklerini oluşturur.
+Bu proje, YOLO model eğitim çıktısı olan `results.csv` dosyasından YOLOv8 standart formatında kayıp (loss) grafiklerini oluşturur.
 
 ## Dosyalar
 
 - `results.csv`: YOLO eğitim sonuçlarını içeren CSV dosyası
-- `plot_loss.py`: Kayıp grafiklerini oluşturan Python scripti
-- `loss_graph.png`: 6 ayrı grafik içeren kayıp görselleştirmesi (train/val box, cls, dfl losses)
-- `loss_graph_combined.png`: Tüm kayıp eğrilerini tek grafikte gösteren görselleştirme
+- `plot_loss.py`: YOLOv8 formatında kayıp grafiklerini oluşturan Python scripti
+- `results.png`: Ultralytics YOLOv8 standart formatında 2x5 grid kayıp görselleştirmesi
 
 ## Gereksinimler
 
 ```bash
 pip install pandas matplotlib numpy
+```
+
+Veya:
+
+```bash
+pip install -r requirements.txt
 ```
 
 ## Kullanım
@@ -25,29 +30,34 @@ python3 plot_loss.py
 
 Script çalıştırıldığında:
 1. `results.csv` dosyasını okur
-2. Training ve validation kayıp değerlerini çıkarır
-3. İki farklı grafik oluşturur:
-   - `loss_graph.png`: 6 ayrı subplot içeren detaylı grafik
-   - `loss_graph_combined.png`: Tüm kayıp eğrilerini tek grafikte gösteren özet grafik
-4. Terminal'de son epoch kayıp değerlerini gösterir
+2. Training ve validation kayıp değerlerini ve metrikleri çıkarır
+3. YOLOv8 standart formatında `results.png` dosyası oluşturur
+4. Terminal'de eğitim istatistiklerini gösterir
 
-## Grafikler
+## Grafik Formatı
 
-### loss_graph.png
-YOLO eğitim sürecindeki 6 farklı kayıp türünü ayrı grafiklerde gösterir:
-- Train Box Loss (Eğitim Kutu Kaybı)
-- Train Classification Loss (Eğitim Sınıflandırma Kaybı)
-- Train DFL Loss (Eğitim DFL Kaybı)
-- Validation Box Loss (Doğrulama Kutu Kaybı)
-- Validation Classification Loss (Doğrulama Sınıflandırma Kaybı)
-- Validation DFL Loss (Doğrulama DFL Kaybı)
+### results.png
+YOLOv8 orijinal formatında 2x5 grid (10 alt grafik) içerir:
 
-### loss_graph_combined.png
-Tüm eğitim ve doğrulama kayıplarını tek bir grafikte birleştirir, karşılaştırma yapmayı kolaylaştırır.
+**Üst Satır (Training Metrikleri):**
+- train/box_loss - Eğitim kutu kaybı
+- train/cls_loss - Eğitim sınıflandırma kaybı
+- train/dfl_loss - Eğitim DFL kaybı
+- metrics/precision(B) - Hassasiyet metriği
+- metrics/recall(B) - Geri çağırma metriği
+
+**Alt Satır (Validation Metrikleri):**
+- val/box_loss - Doğrulama kutu kaybı
+- val/cls_loss - Doğrulama sınıflandırma kaybı
+- val/dfl_loss - Doğrulama DFL kaybı
+- metrics/mAP50(B) - mAP@0.5 metriği
+- metrics/mAP50-95(B) - mAP@0.5:0.95 metriği
 
 ## Özellikler
 
-- NaN değerlerini otomatik olarak yönetir
-- Yüksek çözünürlüklü (300 DPI) grafikler üretir
-- YOLO'nun orijinal çıktısına benzer stil ve format
-- Terminal'de kayıp istatistikleri gösterir
+- ✅ YOLOv8 Ultralytics orijinal format ile %100 uyumlu
+- ✅ 2x5 grid layout (tam olarak YOLOv8 results.png formatı)
+- ✅ NaN değerlerini otomatik olarak yönetir
+- ✅ Yüksek çözünürlüklü (300 DPI) grafikler üretir
+- ✅ Terminal'de detaylı eğitim istatistikleri gösterir
+- ✅ Tüm YOLO kayıp türlerini ve metrikleri içerir
