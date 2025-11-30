@@ -2,25 +2,33 @@
 """
 Script to generate YOLOv8-style Confusion Matrix visualization
 Creates visualization matching the official Ultralytics YOLOv8 confusion_matrix.png format
+
+Note: This script generates a sample confusion matrix based on precision/recall values
+from results.csv. For actual prediction data, use plot_confusion_matrix_from_data() function.
 """
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
 
-def plot_confusion_matrix(csv_file='results.csv', output_file='confusion_matrix.png', 
-                          class_names=None, normalize=True):
+# Sample class names for demonstration (can be customized)
+DEFAULT_CLASS_NAMES = ['Araba', 'Insan', 'Bisiklet', 'Motosiklet', 'Otobus', 
+                       'Kamyon', 'Trafik Isigi', 'Dur Tabelasi', 'background']
+
+def plot_confusion_matrix(results_file='results.csv', output_file='confusion_matrix.png', 
+                          class_names=None, normalize=True, random_seed=42):
     """
     Generate a YOLOv8-style confusion matrix visualization
     
     Args:
-        csv_file: Path to the results.csv file (used for metrics)
+        results_file: Path to the results.csv file (tab-separated format from YOLO training)
         output_file: Path to save the output confusion matrix image
-        class_names: List of class names (if None, uses default object classes)
+        class_names: List of class names (if None, uses DEFAULT_CLASS_NAMES)
         normalize: Whether to normalize the confusion matrix values (default: True)
+        random_seed: Random seed for reproducibility of synthetic matrix (default: 42)
     """
     # Read the CSV file to get precision/recall values for realistic matrix generation
-    df = pd.read_csv(csv_file, sep='\t')
+    df = pd.read_csv(results_file, sep='\t')
     df.columns = df.columns.str.strip()
     
     # Get the best precision and recall values for reference
@@ -32,17 +40,16 @@ def plot_confusion_matrix(csv_file='results.csv', output_file='confusion_matrix.
         best_precision = 0.92
         best_recall = 0.87
     
-    # Default class names for a sample YOLO object detection model
+    # Use default class names if not provided
     if class_names is None:
-        class_names = ['Araba', 'Insan', 'Bisiklet', 'Motosiklet', 'Otobus', 
-                       'Kamyon', 'Trafik Isigi', 'Dur Tabelasi', 'background']
+        class_names = DEFAULT_CLASS_NAMES
     
     n_classes = len(class_names)
     
     # Generate a realistic confusion matrix based on precision/recall
     # Main diagonal should have high values (correct predictions)
     # Off-diagonal should have low values (misclassifications)
-    np.random.seed(42)  # For reproducibility
+    np.random.seed(random_seed)  # For reproducibility
     
     # Create base matrix with high diagonal values
     cm = np.zeros((n_classes, n_classes))
@@ -119,12 +126,6 @@ def plot_confusion_matrix(csv_file='results.csv', output_file='confusion_matrix.
     # Save the figure
     plt.savefig(output_file, dpi=300, bbox_inches='tight', facecolor='white')
     print(f"Confusion matrix saved to: {output_file}")
-    
-    # Also create normalized version if not already normalized
-    if not normalize:
-        plt.close()
-        plot_confusion_matrix(csv_file, output_file.replace('.png', '_normalized.png'), 
-                              class_names, normalize=True)
     
     # Print statistics
     print("\n=== Confusion Matrix Statistics ===")
